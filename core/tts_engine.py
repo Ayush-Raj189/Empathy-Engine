@@ -37,24 +37,24 @@ class TTSEngine:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.lang = lang
 
-    def synthesise(
-        self,
-        text: str,
-        params: VoiceParameters,
-        ssml: str = "",
-        filename: str = "",
-    ) -> AudioResult:
+   def synthesise(
+    self,
+    text: str,
+    params: VoiceParameters,
+    ssml: str = "",
+    filename: str = "",
+) -> AudioResult:
 
-        if not filename:
-            timestamp = int(time.time() * 1000)
-            filename = f"empathy_{params.emotion}_{timestamp}.mp3"
+    # Always use fresh timestamp to avoid caching
+    timestamp = int(time.time() * 1000)
+    filename = f"empathy_{params.emotion}_{timestamp}.mp3"
 
-        out_path = self.output_dir / filename
+    out_path = self.output_dir / filename
 
-        # gTTS generates mp3 directly
-        slow = params.slow
-        tts = gTTS(text=text, lang=self.lang, slow=slow)
-        tts.save(str(out_path))
+    # Force new gTTS instance every time with current params
+    slow = bool(params.slow)
+    tts = gTTS(text=text, lang=self.lang, slow=slow)
+    tts.save(str(out_path))
 
         # Save SSML
         ssml_path = ""
