@@ -3,14 +3,11 @@ tts_engine.py
 -------------
 TTS synthesis pipeline for the Empathy Engine.
 Uses gTTS only. No pydub (incompatible with Python 3.14).
-Speed/pitch/volume applied via raw WAV manipulation.
 """
 
 import io
 import time
-import struct
 import logging
-import wave
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -37,33 +34,28 @@ class TTSEngine:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.lang = lang
 
-   def synthesise(
-    self,
-    text: str,
-    params: VoiceParameters,
-    ssml: str = "",
-    filename: str = "",
-) -> AudioResult:
+    def synthesise(
+        self,
+        text: str,
+        params: VoiceParameters,
+        ssml: str = "",
+        filename: str = "",
+    ) -> AudioResult:
 
-    # Always use fresh timestamp to avoid caching
-    timestamp = int(time.time() * 1000)
-    filename = f"empathy_{params.emotion}_{timestamp}.mp3"
+        timestamp = int(time.time() * 1000)
+        filename = f"empathy_{params.emotion}_{timestamp}.mp3"
+        out_path = self.output_dir / filename
 
-    out_path = self.output_dir / filename
+        slow = bool(params.slow)
+        tts = gTTS(text=text, lang=self.lang, slow=slow)
+        tts.save(str(out_path))
 
-    # Force new gTTS instance every time with current params
-    slow = bool(params.slow)
-    tts = gTTS(text=text, lang=self.lang, slow=slow)
-    tts.save(str(out_path))
-
-        # Save SSML
         ssml_path = ""
         if ssml:
             ssml_path = str(out_path).replace(".mp3", ".ssml")
             Path(ssml_path).write_text(ssml, encoding="utf-8")
 
         file_size = out_path.stat().st_size
-
         logger.info("Audio synthesised: %s | engine=gtts", out_path.name)
 
         return AudioResult(
