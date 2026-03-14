@@ -483,17 +483,14 @@ hr { border-color: var(--border) !important; }
 
 # ── Session state ───────────────────────────────────────────────────────────
 def init_session():
-   if "pipeline" not in st.session_state:
-    output_dir_env = os.getenv("EMPATHY_OUTPUT_DIR", "/tmp/audio_output")
-    output_dir_path = Path(output_dir_env)
-    if not output_dir_path.is_absolute():
+    if "pipeline" not in st.session_state:
         output_dir_path = Path("/tmp/audio_output")
-    output_dir_path.mkdir(parents=True, exist_ok=True)
-    lang = os.getenv("EMPATHY_LANG", "en")
-    st.session_state.pipeline = EmpathyPipeline(
-        output_dir=str(output_dir_path),
-        lang=lang,
-    )
+        output_dir_path.mkdir(parents=True, exist_ok=True)
+        lang = os.getenv("EMPATHY_LANG", "en")
+        st.session_state.pipeline = EmpathyPipeline(
+            output_dir=str(output_dir_path),
+            lang=lang,
+        )
     if "history" not in st.session_state:
         st.session_state.history = []
     if "last_result" not in st.session_state:
