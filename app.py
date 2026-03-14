@@ -14,12 +14,10 @@ import time
 import base64
 import logging
 from pathlib import Path
-from dotenv import load_dotenv
 
 # ── Make local modules importable ──────────────────────────────────────────
 BASE_DIR = Path(__file__).parent
 sys.path.insert(0, str(BASE_DIR))
-load_dotenv(BASE_DIR / ".env")
 
 import streamlit as st
 import plotly.graph_objects as go
