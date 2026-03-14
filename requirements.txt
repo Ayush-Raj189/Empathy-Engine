@@ -1,7 +1,5 @@
 streamlit>=1.40.0
 gtts==2.5.1
-pydub>=0.25.1
-pyaudioop==0.2.0
 vaderSentiment==3.3.2
 textblob==0.18.0
 plotly==5.19.0
